@@ -8,4 +8,5 @@ gem 'sinatra-activerecord'
 gem 'sinatra-contrib'
 gem 'sinatra-flash'
 gem 'geocoder'
+gem 'gmaps4rails'
 

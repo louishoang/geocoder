@@ -1,54 +1,87 @@
+<script>
+  var map;
+  function initialize() {
+    var mapOptions = {
+      zoom: 15,
+      center: new google.maps.LatLng(<%= @map_center.split(',').first.to_f %>, <%= @map_center.split(',').last.to_f %>)
+    };
+
+    map = new google.maps.Map(document.getElementById('map-canvas'),
+        mapOptions);
+
+    <% @users.each do |user| %>
+      var infowindow = new google.maps.InfoWindow({
+        content: "<h1>JELLO LOUIS</h1>"
+      });
+
+      var position = new google.maps.LatLng(<%= user.latitude %>, <%= user.longitude %>);
+
+      var marker = new google.maps.Marker({
+        position: position,
+        map: map,
+        title: 'Hello World!'
+      });
+
+      google.maps.event.addListener(marker, 'click', function() {
+        infowindow.open(map, marker);
+      });
+    <% end %>
+  }
+
+  google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+
+
 <h2>Search</h2>
+
 <form class="inline" action="/users" method="get">
-  <div class="large-12 columns">
-      <div class="row collapse prefix-radius">
-        <div class="small-2 columns">
-          <span class="prefix">Address</span>
-        </div>
-        <div class="small-7 columns">
-          <input type="text" placeholder="address" name="address">
-        </div>
-        <div class="small-3 columns">
-          <input class="tiny round button" type="submit" value="submit">
-        </div>
-      </div>
+  <div class="row collapse prefix-radius">
+    <div class="small-2 columns">
+      <span class="prefix">Address</span>
     </div>
+    <div class="small-7 columns">
+      <input type="text" placeholder="address" name="address">
+    </div>
+    <div class="small-3 columns">
+      <input class="tiny round button" type="submit" value="submit">
+    </div>
+  </div>
 </form>
 
-<div class="large-12 columns push-2">
-  <ul class="inline-list">
-    <li> Distance: </li>
-    <li><a href="#">10</a></li>
-    <li><a href="#">20</a></li>
-    <li><a href="#">30</a></li>
-  </ul>
-</div>
+<ul class="inline-list">
+  <li>Distance:</li>
 
-<div class="large-12 columns" style="margin-top: 50px">
-  <ul>
-    <% @users.each do |user| %>
-      <li>
-        <h5><%= user.name %></h5>
-        <div>
-          <ul class="inline-list">
-            <li>
-              <%= user.address %>
-            </li>
-            <li>
-              <% if user[:distance] %>
-                <% if user.distance.round(2) <= 1 %>
-                  Less than 1 mile
-                <% else %>
-                  <%= user.distance.round(1) %> miles
-                <% end %>
+  <li><a href="/users?address=<%= params[:address] %>&amp;distance=10">10</a></li>
+  <li><a href="/users?address=<%= params[:address] %>&amp;distance=20">20</a></li>
+  <li><a href="/users?address=<%= params[:address] %>&amp;distance=50">50</a></li>
+  <li><a href="/users?address=<%= params[:address] %>&amp;distance=100">100</a></li>
+</ul>
+
+<div id="map-canvas"></div>
+
+<ul>
+  <% @users.each do |user| %>
+    <li>
+      <h5><%= user.name %></h5>
+      <div>
+        <ul class="inline-list">
+          <li>
+            <%= user.address %>
+          </li>
+          <li>
+            <% if user[:distance] %>
+              <% if user.distance.round(2) <= 1 %>
+                Less than 1 mile
+              <% else %>
+                <%= user.distance.round(1) %> miles
               <% end %>
-            </li>
-            <li>
-              <a href="#">Show Direction</a>
-            </li>
-          </ul>
-        </div>
-      </li>
-    <% end %>
-  </ul>
-</div>
+            <% end %>
+          </li>
+          <li>
+            <a href="#">Show Direction</a>
+          </li>
+        </ul>
+      </div>
+    </li>
+  <% end %>
+</ul>

@@ -1,4 +1,3 @@
-
 class User < ActiveRecord::Base
   extend ::Geocoder::Model::ActiveRecord
 

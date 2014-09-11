@@ -19,11 +19,20 @@ get '/' do
 end
 
 get '/users' do
+  distance = params[:distance] ||= 10
+
   if params[:address]
-    @users = User.near(params[:address], 10)
+    @users = User.near(params[:address], distance)
     @users.order('distance')
+
+    if @users.class != NilClass
+      @map_center = @users.first.latitude.to_s + ',' + @users.first.longitude.to_s
+    else
+      @map_center = %Q{-34.397, 150.644}
+    end
   else
     @users = User.all
+    @map_center = %Q{-34.397, 150.644}
   end
   erb :'users/index'
 end
